@@ -1,0 +1,32 @@
+name: TPC Louisiana Stock Checker
+
+on:
+  schedule:
+    # Runs every day at 9:00 AM Central Time (14:00 UTC)
+    - cron: "0 14 * * *"
+
+  # Lets you trigger it manually from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  check-stock:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install anthropic
+
+      - name: Run stock checker
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python stock_checker.py
